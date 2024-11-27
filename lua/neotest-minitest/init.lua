@@ -105,7 +105,7 @@ function NeotestAdapter.build_spec(args)
     table.insert(script_args, spec_path)
     table.insert(script_args, "--name")
     -- https://chriskottom.com/articles/command-line-flags-for-minitest-in-the-raw/
-    table.insert(script_args, "/^" .. full_name .. "$/")
+    table.insert(script_args, "/" .. full_name .. "/")
   end
 
   local function run_dir()
