@@ -108,29 +108,6 @@ function NeotestAdapter.build_spec(args)
     table.insert(script_args, "/" .. full_name .. "/")
   end
 
-  local function run_dir()
-    local tree = args.tree
-    local root = tree:root():data().path
-
-    -- This emulates an combination of Rake::TestTask with loader=:direct and
-    -- rake_test_loader
-    table.insert(script_args, "-e")
-    table.insert(script_args, "while (f = ARGV.shift) != '--'; require f; end")
-
-    -- Instruct Ruby to stop parsing options
-    table.insert(script_args, "--")
-
-    for _, node in tree:iter_nodes() do
-      if node:data().type == "file" then
-        local path = node:data().path
-	table.insert(script_args, path)
-      end
-    end
-
-    -- Mark the end of test files
-    table.insert(script_args, "--")
-  end
-
   local function dap_strategy(command)
     local port = math.random(49152, 65535)
     port = config.port or port
@@ -164,9 +141,9 @@ function NeotestAdapter.build_spec(args)
 
   if position.type == "file" then run_by_filename() end
 
-  if position.type == "test" or position.type == "namespace" then run_by_name() end
+  if position.type == "file" or position.type == "dir" then run_by_filename() end
 
-  if position.type == "dir" then run_dir() end
+  if position.type == "test" or position.type == "namespace" then run_by_name() end
 
   local command = vim.tbl_flatten({
     config.get_test_cmd(),
